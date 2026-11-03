@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Wayfarer — Find your Greek trail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #20352f;
+      --muted: #78827b;
+      --green: #336d53;
+      --green-dark: #244e3b;
+      --lime: #d7ed9f;
+      --paper: #f6f7f2;
+      --white: #fff;
+      --line: #e7eae2;
+      --orange: #e98a55;
+      --red: #b94137;
+      --red-soft: #fff0ec;
+      --shadow: 0 16px 46px rgba(32, 53, 47, .09);
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: var(--paper); }
+    button, select, input, textarea { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    .app { max-width: 1440px; min-height: 100vh; margin: auto; display: grid; grid-template-columns: 226px minmax(0, 1fr); }
+    .sidebar { background: #fff; border-right: 1px solid var(--line); padding: 28px 18px; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; height: 100vh; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; font-family: Manrope, sans-serif; font-size: 19px; font-weight: 800; letter-spacing: 0; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--green); color: var(--lime); }
+    .brand-mark svg { width: 21px; }
+    .nav-label { color: #a0a9a0; text-transform: uppercase; font-size: 10px; font-weight: 700; letter-spacing: 1.15px; padding: 0 12px; margin: 42px 0 12px; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-item { width: 100%; border: 0; background: transparent; padding: 11px 12px; border-radius: 9px; display: flex; align-items: center; gap: 12px; text-align: left; color: #738078; font-size: 13px; font-weight: 600; }
+    .nav-item svg { width: 18px; height: 18px; }
+    .nav-item.active { background: #edf4ed; color: var(--green-dark); }
+    .sidebar-bottom { margin-top: auto; }
+    .local-card { padding: 14px; border-radius: 11px; background: #f2f5ee; }
+    .local-card strong { display: block; font-size: 12px; margin: 8px 0 4px; }
+    .local-card p { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 0 0 11px; }
+    .local-card button { border: 0; padding: 0; background: none; color: var(--green); font-size: 11px; font-weight: 700; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: #dce5d8; }
+    .profile-mini { display: flex; align-items: center; gap: 10px; padding: 18px 7px 0; margin-top: 17px; border-top: 1px solid var(--line); cursor: pointer; }
+    .profile-mini strong { display: block; font-size: 12px; }
+    .profile-mini small { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .main { min-width: 0; padding: 0 42px 70px; }
+    .topbar { height: 79px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .breadcrumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    .icon-button { width: 37px; height: 37px; display: grid; place-items: center; background: white; border: 1px solid var(--line); border-radius: 50%; position: relative; }
+    .icon-button svg { width: 17px; height: 17px; }
+    .notification-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); position: absolute; right: 7px; top: 7px; border: 1px solid white; }
+    .page { max-width: 1100px; margin: 0 auto; }
+    .welcome { display: flex; justify-content: space-between; align-items: end; padding: 36px 0 22px; gap: 20px; }
+    .eyebrow { color: var(--green); text-transform: uppercase; letter-spacing: 1.5px; font-size: 10px; font-weight: 700; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-family: Manrope, sans-serif; font-size: clamp(26px, 3vw, 36px); letter-spacing: -.8px; line-height: 1.14; margin: 8px 0 7px; }
+    .welcome p { color: var(--muted); font-size: 13px; margin: 0; }
+    .weather-pill { display: inline-flex; align-items: center; gap: 8px; background: white; padding: 10px 13px; border: 1px solid var(--line); border-radius: 9px; font-size: 12px; white-space: nowrap; }
+    .weather-pill .sun { color: #db9a40; font-size: 18px; }
+    .weather-pill small { color: var(--muted); display: block; font-size: 10px; }
+    .hero { display: grid; grid-template-columns: 1.12fr .88fr; min-height: 246px; border-radius: 13px; overflow: hidden; background: var(--green-dark); color: white; position: relative; }
+    .hero-copy { padding: 28px 30px; z-index: 1; background: linear-gradient(90deg, rgba(26,61,45,.97) 0%, rgba(26,61,45,.92) 58%, rgba(26,61,45,.15) 100%); }
+    .hero-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--lime); font-weight: 700; }
+    .hero h2 { font-family: Manrope, sans-serif; font-size: 26px; line-height: 1.2; margin: 15px 0 8px; max-width: 320px; }
+    .hero p { color: rgba(255,255,255,.77); font-size: 12px; line-height: 1.55; max-width: 320px; margin-bottom: 18px; }
+    .primary-button { background: var(--lime); border: 0; border-radius: 7px; color: #243f30; padding: 10px 14px; font-size: 11px; font-weight: 700; }
+    .hero-image { position: absolute; inset: 0 0 0 42%; background: linear-gradient(90deg, #1a3d2d 0%, transparent 58%), url("https://images.unsplash.com/photo-1609198092458-38a293c7ac4b?auto=format&fit=crop&w=1200&q=85") center 48% / cover; }
+    .filter-panel { margin: 22px 0 27px; padding: 14px 16px; background: white; border: 1px solid var(--line); border-radius: 11px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .filter-heading { color: var(--muted); display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; margin-right: 5px; }
+    .filter-heading svg { width: 16px; }
+    .filter-panel select { min-width: 137px; border: 1px solid var(--line); color: #405048; padding: 9px 30px 9px 10px; border-radius: 7px; background: #fff; outline: none; font-size: 11px; }
+    .filter-panel select:focus, input:focus, textarea:focus { border-color: #7a9e85; box-shadow: 0 0 0 3px rgba(74,127,88,.12); outline: none; }
+    .filter-divider { height: 27px; width: 1px; background: var(--line); margin: 0 2px; }
+    .segmented { display: flex; gap: 2px; padding: 3px; background: #f2f4ef; border-radius: 7px; }
+    .segmented button { border: 0; background: transparent; color: #77827a; padding: 7px 9px; border-radius: 5px; font-size: 10px; font-weight: 600; }
+    .segmented button.selected { background: white; color: var(--green-dark); box-shadow: 0 1px 4px rgba(25,40,30,.1); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 14px; }
+    .section-heading h2 { font: 700 18px Manrope, sans-serif; letter-spacing: -.2px; margin: 0 0 4px; }
+    .section-heading p { color: var(--muted); font-size: 11px; margin: 0; }
+    .text-button { color: var(--green); background: none; border: 0; padding: 4px; font-size: 11px; font-weight: 700; }
+    .safety-banner { display: flex; gap: 11px; padding: 12px 14px; background: #fff5f1; border: 1px solid #f4d6ca; border-radius: 9px; margin: 0 0 14px; color: #824d40; }
+    .safety-banner svg { flex: 0 0 18px; width: 18px; margin-top: 1px; color: #c3684d; }
+    .safety-banner strong { display: block; font-size: 11px; margin-bottom: 3px; }
+    .safety-banner span { display: block; font-size: 10px; line-height: 1.45; }
+    .route-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .route-card { min-width: 0; background: white; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; transition: transform .18s ease, box-shadow .18s ease; }
+    .route-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .route-photo { height: 148px; position: relative; background: #d9e3d6 center / cover; }
+    .route-photo::after { content: ""; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(21,38,28,.32)); }
+    .route-region { position: absolute; left: 10px; top: 10px; z-index: 1; padding: 5px 8px; color: #304337; background: rgba(255,255,255,.94); border-radius: 5px; font-size: 9px; font-weight: 700; }
+    .photo-weather { position: absolute; right: 9px; bottom: 9px; z-index: 1; color: white; font-size: 11px; text-shadow: 0 1px 5px #25342b; }
+    .route-content { padding: 13px 13px 12px; }
+    .route-title-row { display: flex; align-items: start; justify-content: space-between; gap: 6px; }
+    .route-title { font: 700 14px Manrope, sans-serif; line-height: 1.3; margin: 0 0 4px; }
+    .route-location { color: var(--muted); font-size: 10px; margin: 0; }
+    .save-button { border: 0; background: transparent; color: #94a097; padding: 1px; flex: 0 0 auto; }
+    .save-button svg { width: 17px; height: 17px; }
+    .save-button.is-interested { color: #ce7058; }
+    .route-stats { display: flex; gap: 12px; color: #68756c; font-size: 10px; padding: 12px 0 10px; border-bottom: 1px solid #eff0ec; }
+    .route-stats span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .route-stats svg { width: 13px; height: 13px; }
+    .route-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; gap: 5px; }
+    .difficulty { font-size: 9px; font-weight: 700; color: var(--green); background: #edf4eb; border-radius: 4px; padding: 5px 7px; }
+    .difficulty.advanced { color: #9c5e3c; background: #fbf0e7; }
+    .interested-count { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .details-button { border: 0; color: var(--green); background: transparent; font-size: 10px; font-weight: 700; padding: 5px 0 5px 4px; white-space: nowrap; }
+    .blocked-note { display: flex; gap: 4px; color: var(--red); align-items: center; font-size: 9px; font-weight: 700; }
+    .blocked-note svg { width: 13px; }
+    .empty-state { background: white; border: 1px dashed #d9dfd6; border-radius: 10px; text-align: center; padding: 38px 15px; color: var(--muted); font-size: 12px; grid-column: 1/-1; }
+    .empty-state strong { display: block; font: 700 15px Manrope; color: var(--ink); margin-bottom: 5px; }
+    .community-strip { margin-top: 28px; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 12px; }
+    .community-item { background: #edf2eb; border-radius: 9px; padding: 14px; min-height: 94px; }
+    .community-item:first-child { background: #e8eee8; }
+    .community-item span { color: var(--green); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+    .community-item strong { display: block; font: 700 13px Manrope; margin: 7px 0 4px; }
+    .community-item p { color: var(--muted); font-size: 10px; line-height: 1.4; margin: 0; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .profile-header { display: flex; align-items: center; gap: 18px; padding: 34px 0 24px; border-bottom: 1px solid var(--line); }
+    .profile-header .avatar { width: 68px; height: 68px; }
+    .profile-header h1 { font-size: 25px; margin: 0 0 4px; }
+    .profile-header p { color: var(--muted); font-size: 12px; margin: 0; }
+    .profile-stats { display: flex; gap: 28px; margin-left: auto; }
+    .profile-stats strong { display: block; font: 700 16px Manrope; }
+    .profile-stats span { color: var(--muted); font-size: 10px; }
+    .profile-columns { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; padding-top: 24px; }
+    .profile-block { margin-bottom: 25px; }
+    .profile-block h2 { font: 700 16px Manrope; margin: 0 0 12px; }
+    .log-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .log-photo { aspect-ratio: 1; border-radius: 7px; background: #dce5d8 center/cover; position: relative; overflow: hidden; }
+    .log-photo span { position: absolute; bottom: 7px; left: 8px; color: white; text-shadow: 0 1px 4px #222; font-size: 10px; font-weight: 700; }
+    .tip-card { border: 1px solid var(--line); background: white; border-radius: 8px; padding: 13px; margin-bottom: 9px; }
+    .tip-card strong { font-size: 12px; }
+    .tip-card p { color: var(--muted); font-size: 11px; line-height: 1.55; margin: 6px 0 0; }
+    .friend-list { background: white; border: 1px solid var(--line); border-radius: 9px; padding: 8px 13px; }
+    .friend-row { display: flex; align-items: center; gap: 9px; padding: 9px 0; border-bottom: 1px solid #eff0ec; }
+    .friend-row:last-child { border: 0; }
+    .friend-row .avatar { width: 30px; height: 30px; }
+    .friend-row strong { font-size: 11px; }
+    .friend-row small { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+    .friend-add { margin-left: auto; border: 1px solid var(--line); background: white; color: var(--green); border-radius: 6px; padding: 6px 8px; font-size: 9px; font-weight: 700; }
+    .friend-add.added { color: var(--muted); background: #f3f5f1; }
+    .mobile-nav { display: none; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; z-index: 20; background: rgba(22,35,29,.48); align-items: center; justify-content: center; padding: 18px; }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(660px, 100%); max-height: min(88vh, 830px); overflow: auto; background: white; border-radius: 13px; box-shadow: 0 20px 70px rgba(0,0,0,.2); animation: rise .2s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+    .modal-hero { height: 205px; background: #ccd9cb center/cover; position: relative; }
+    .modal-hero::after { content: ""; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent,rgba(0,0,0,.45)); }
+    .modal-close { position: absolute; z-index: 1; right: 12px; top: 12px; width: 34px; height: 34px; background: white; border: 0; border-radius: 50%; display: grid; place-items: center; }
+    .modal-close svg { width: 17px; }
+    .modal-title-over { position: absolute; z-index: 1; bottom: 16px; left: 21px; color: white; }
+    .modal-title-over span { font-size: 10px; opacity: .88; }
+    .modal-title-over h2 { font: 700 23px Manrope; margin: 4px 0 0; }
+    .modal-body { padding: 19px 22px 22px; }
+    .modal-stats { display: flex; gap: 22px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+    .modal-stats span { color: var(--muted); font-size: 10px; }
+    .modal-stats strong { display: block; color: var(--ink); font-size: 12px; margin-bottom: 4px; }
+    .modal-description { color: #59665d; font-size: 12px; line-height: 1.6; margin: 14px 0; }
+    .alert-inline { background: var(--red-soft); border-radius: 7px; padding: 10px 12px; color: #98483e; display: flex; gap: 8px; font-size: 10px; line-height: 1.5; margin-bottom: 14px; }
+    .alert-inline svg { width: 15px; flex: 0 0 15px; }
+    .detail-tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); margin-top: 8px; }
+    .detail-tab { position: relative; border: 0; background: none; color: var(--muted); padding: 10px 0; font-size: 11px; font-weight: 600; }
+    .detail-tab.active { color: var(--green); }
+    .detail-tab.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--green); }
+    .tab-panel { padding: 14px 0 3px; min-height: 99px; }
+    .tab-panel h3 { font: 700 12px Manrope; margin: 0 0 9px; }
+    .gear-list { display: flex; flex-wrap: wrap; gap: 7px; }
+    .gear-chip { background: #f1f4ef; color: #536258; padding: 7px 9px; border-radius: 5px; font-size: 10px; }
+    .gear-chip.needed { border: 1px dashed #bd8d66; background: #fff8f1; color: #96603a; }
+    .lodging-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f0f1ed; }
+    .lodging-row:last-child { border: 0; }
+    .lodging-icon { display: grid; place-items: center; width: 31px; height: 31px; background: #edf4eb; border-radius: 7px; color: var(--green); }
+    .lodging-icon svg { width: 16px; }
+    .lodging-row strong { font-size: 10px; }
+    .lodging-row small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .borrow-box { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; background: #f5f7f2; border-radius: 7px; }
+    .borrow-box span { color: #59665d; font-size: 10px; }
+    .borrow-box button, .modal-actions button { padding: 9px 11px; border: 0; border-radius: 6px; background: var(--green); color: white; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .modal-actions { display: flex; gap: 8px; padding-top: 13px; border-top: 1px solid var(--line); }
+    .modal-actions .secondary { background: white; border: 1px solid var(--line); color: var(--green); }
+    .modal-actions .unsafe { background: #f1d8d1; color: #98483e; cursor: not-allowed; }
+    .message-content { padding: 23px; }
+    .message-content h2 { font: 700 19px Manrope; margin: 0 0 5px; }
+    .message-content p { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .message-thread { background: #f3f5f0; border-radius: 8px; padding: 12px; min-height: 115px; max-height: 200px; overflow: auto; margin: 15px 0; }
+    .message-bubble { background: white; border-radius: 8px 8px 8px 2px; padding: 9px 10px; font-size: 10px; max-width: 85%; margin-bottom: 7px; line-height: 1.45; }
+    .message-bubble.mine { background: #e4efdf; margin-left: auto; border-radius: 8px 8px 2px 8px; }
+    .message-form { display: flex; gap: 8px; }
+    .message-form input { min-width: 0; flex: 1; border: 1px solid var(--line); border-radius: 7px; padding: 10px; font-size: 11px; }
+    .message-form button { border: 0; background: var(--green); color: white; border-radius: 7px; padding: 0 14px; font-size: 10px; font-weight: 700; }
+    .toast { position: fixed; z-index: 30; bottom: 24px; left: 50%; transform: translate(-50%, 15px); opacity: 0; pointer-events: none; background: #20352f; color: white; border-radius: 8px; padding: 11px 15px; font-size: 11px; transition: .2s ease; box-shadow: var(--shadow); }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    @media (max-width: 1050px) {
+      .app { grid-template-columns: 196px minmax(0,1fr); }
+      .main { padding: 0 25px 65px; }
+      .route-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .filter-panel { gap: 8px; }
+      .filter-panel select { min-width: 120px; }
+    }
+    @media (max-width: 700px) {
+      .app { display: block; padding-bottom: 66px; }
+      .sidebar { display: none; }
+      .main { padding: 0 16px 36px; }
+      .topbar { height: 59px; }
+      .breadcrumb { font-size: 11px; }
+      .top-actions .desktop-avatar { display: none; }
+      .welcome { padding: 24px 0 17px; align-items: start; }
+      h1 { font-size: 27px; }
+      .welcome p { font-size: 11px; line-height: 1.5; max-width: 240px; }
+      .weather-pill { padding: 8px; font-size: 10px; gap: 5px; }
+      .weather-pill small { font-size: 9px; }
+      .hero { min-height: 222px; grid-template-columns: 1fr; }
+      .hero-copy { padding: 22px 20px; background: linear-gradient(90deg,rgba(26,61,45,.96),rgba(26,61,45,.68) 68%,rgba(26,61,45,.2)); }
+      .hero-image { inset: 0; background-position: center; }
+      .hero h2 { font-size: 23px; max-width: 270px; }
+      .hero p { max-width: 260px; }
+      .filter-panel { padding: 12px; margin: 15px 0 22px; gap: 8px; }
+      .filter-heading { width: 100%; }
+      .filter-panel select { flex: 1 1 42%; min-width: 0; }
+      .filter-divider { display: none; }
+      .filter-panel .experience-control { flex-basis: 100%; }
+      .filter-panel .travel-control { flex: 1; }
+      .segmented button { padding: 7px 8px; }
+      .route-grid { gap: 10px; }
+      .route-photo { height: 122px; }
+      .route-content { padding: 10px; }
+      .route-title { font-size: 12px; }
+      .route-stats { gap: 8px; font-size: 9px; }
+      .route-stats svg { width: 12px; }
+      .route-footer { flex-wrap: wrap; }
+      .interested-count { display: none; }
+      .community-strip { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+      .community-item:first-child { grid-column: 1/-1; }
+      .community-item { min-height: 86px; }
+      .mobile-nav { position: fixed; z-index: 10; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(3,1fr); height: 61px; padding: 5px 10px max(5px, env(safe-area-inset-bottom)); background: rgba(255,255,255,.97); border-top: 1px solid var(--line); }
+      .mobile-nav button { border: 0; background: none; color: #859087; font-size: 9px; display: grid; justify-items: center; align-content: center; gap: 3px; }
+      .mobile-nav button.active { color: var(--green); font-weight: 700; }
+      .mobile-nav svg { width: 18px; height: 18px; }
+      .profile-header { padding: 23px 0 17px; gap: 12px; flex-wrap: wrap; }
+      .profile-header .avatar { width: 54px; height: 54px; }
+      .profile-header h1 { font-size: 21px; }
+      .profile-stats { width: 100%; margin: 6px 0 0; justify-content: space-around; text-align: center; }
+      .profile-columns { grid-template-columns: 1fr; gap: 0; padding-top: 19px; }
+      .modal-backdrop { padding: 0; align-items: end; }
+      .modal { width: 100%; max-height: 92dvh; border-radius: 14px 14px 0 0; }
+      .modal-hero { height: 170px; }
+      .modal-body { padding: 15px 17px 20px; }
+      .modal-stats { gap: 16px; }
+      .modal-actions { position: sticky; bottom: -20px; background: white; padding: 12px 0 4px; }
+      .message-content { padding: 22px 18px max(22px,env(safe-area-inset-bottom)); }
+      .toast { bottom: 75px; width: max-content; max-width: calc(100vw - 32px); }
+    }
+    @media (max-width: 390px) {
+      .route-grid { grid-template-columns: 1fr; }
+      .route-photo { height: 165px; }
+      .route-content { padding: 12px; }
+      .route-title { font-size: 14px; }
+      .interested-count { display: block; }
+      .welcome { gap: 8px; }
+      .weather-pill { padding: 7px 6px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 18 6-10 3.2 5 2.2-3.5L21 18H3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m7.2 18 4.1-6.2 4.2 6.2" stroke="currentColor" stroke-width="1.8"/></svg></span>wayfarer</div>
+      <div class="nav-label">Your journey</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="explore"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4 4M8 13l2.4-4 1.5 2.5 1-1.6 2 3.1H8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Explore trails</button>
+        <button class="nav-item" data-view="community"><svg viewBox="0 0 24 24" fill="none"><path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20m6-9a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6-6.5a3.5 3.5 0 0 1 0 6.8m4 8.7v-1.5a3.5 3.5 0 0 0-2.6-3.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Hiking circles</button>
+        <button class="nav-item" data-view="profile"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5.2 20a6.8 6.8 0 0 1 13.6 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>My profile</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-card"><span style="font-size:19px">☀</span><strong>Good trail weather</strong><p>Clear skies around Zagori today. Start early for the best light.</p><button data-action="weather">See local forecast →</button></div>
+        <div class="profile-mini" data-view="profile"><img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&q=75" alt="Alex Morgan"><div><strong>Alex Morgan</strong><small>Trail seeker · Athens</small></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="breadcrumb" id="breadcrumb">Discover <span style="padding:0 6px;color:#b1b8b0">/</span> Greece</div><div class="top-actions"><button class="icon-button" aria-label="Notifications" data-action="notifications"><svg viewBox="0 0 24 24" fill="none"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="notification-dot"></span></button><img class="avatar desktop-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&q=75" alt="Alex Morgan" data-view="profile" style="cursor:pointer"></div></header>
+      <section id="exploreView" class="view active">
+        <div class="page">
+          <div class="welcome"><div><div class="eyebrow">Tuesday, 18 June · Greece</div><h1>Find your next<br>way out there.</h1><p>Good morning, Alex. Your next great trail is closer than you think.</p></div><div class="weather-pill"><span class="sun">☀</span><span><strong>22°</strong><small>Zagori, Epirus</small></span></div></div>
+          <div class="hero"><div class="hero-image" role="img" aria-label="Mountain landscape in Greece"></div><div class="hero-copy"><span class="hero-label">The long way is the good way</span><h2>Walk the wild heart of Greece.</h2><p>From quiet island paths to high alpine passes, find a trail that feels like yours.</p><button class="primary-button" data-action="discover">Explore all trails <span aria-hidden="true">↗</span></button></div></div>
+          <div class="filter-panel" aria-label="Route filters"><div class="filter-heading"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10m-7 6h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Find your trail</div>
+            <select id="regionFilter" aria-label="Region"><option value="all">All regions</option><option value="Epirus">Epirus</option><option value="Crete">Crete</option><option value="Thessaly">Thessaly</option><option value="Peloponnese">Peloponnese</option><option value="Cyclades">Cyclades</option></select>
+            <span class="filter-divider"></span><div class="segmented experience-control" role="group" aria-label="Experience level"><button class="selected" data-level="all">Any level</button><button data-level="Beginner">Easy</button><button data-level="Intermediate">Moderate</button><button data-level="Advanced">Hard</button></div>
+            <span class="filter-divider"></span><div class="segmented travel-control" role="group" aria-label="Travel type"><button class="selected" data-travel="any">Any crew</button><button data-travel="solo">Solo</button><button data-travel="group">Group</button></div>
+          </div>
+          <div class="section-heading"><div><h2>Picked for your pace</h2><p id="routeSubheading">Trails worth taking the long way for</p></div><button class="text-button" data-action="clearFilters">Reset filters ↗</button></div>
+          <div class="safety-banner"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 2.8 19h18.4L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v4m0 3h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><div><strong>Mountain conditions can change quickly</strong><span>Olympus has a severe storm warning today. We’ve blocked access to keep hikers safe; check again before planning.</span></div></div>
+          <div class="route-grid" id="routeGrid"></div>
+          <div class="community-strip"><div class="community-item"><span>Trail community</span><strong>Your people are out there.</strong><p>Find hiking partners, borrow gear, and swap local knowledge.</p></div><div class="community-item"><span>Gear library</span><strong>Pack lighter together.</strong><p>Borrow trail essentials from hikers nearby.</p></div><div class="community-item"><span>Mountain stays</span><strong>Stay a little longer.</strong><p>Find huts and welcoming places along the way.</p></div></div>
+        </div>
+      </section>
+      <section id="communityView" class="view"><div class="page"><div class="welcome"><div><div class="eyebrow">The good company</div><h1>Hiking is better<br>shared.</h1><p>Meet the people heading where you're headed.</p></div><div class="weather-pill"><span class="sun">◉</span><span><strong>12 hikers</strong><small>planning this week</small></span></div></div><div class="section-heading"><div><h2>Find your hiking circle</h2><p>People near your next trail, ready to go.</p></div></div><div class="friend-list" id="communityFriends"></div><div class="profile-columns"><div class="profile-block"><h2>Gear to share nearby</h2><div class="tip-card"><strong>Lightweight trekking poles</strong><p>2 pairs available in Ioannina · Free to borrow from Maria K.</p><button class="text-button" data-message="Maria K.">Message Maria →</button></div><div class="tip-card"><strong>Water filter &amp; day pack</strong><p>Available in Chania · Swap for a coffee and trail stories.</p><button class="text-button" data-message="Nikos P.">Message Nikos →</button></div></div><div class="profile-block"><h2>Local trail notes</h2><div class="tip-card"><strong>Vikos gorge tip</strong><p>“Start from Monodendri before 8am. The light in the gorge is unreal, and you’ll beat the heat.”</p><p style="margin-top:8px">— Eleni, Zagori local</p></div></div></div></div></section>
+      <section id="profileView" class="view"><div class="page"><div class="profile-header"><img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=180&q=80" alt="Alex Morgan"><div><h1>Alex Morgan</h1><p>Athens, Greece · Here for the mountain air</p></div><div class="profile-stats"><div><strong>18</strong><span>trails walked</span></div><div><strong>246</strong><span>friends</span></div><div><strong>7</strong><span>photo logs</span></div></div></div><div class="profile-columns"><div><div class="profile-block"><h2>Trail moments</h2><div class="log-grid" id="photoLogs"><div class="log-photo" style="background-image:url('https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=400&q=75')"><span>Vikos Gorge</span></div><div class="log-photo" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=75')"><span>Mount Olympus</span></div><div class="log-photo" style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=75')"><span>Island paths</span></div></div><input id="photoInput" type="file" accept="image/*" hidden><button class="text-button" style="margin-top:10px" data-action="sharePhoto">＋ Share a photo log</button></div><div class="profile-block"><h2>Trail tips &amp; tricks</h2><div id="tipsList"><div class="tip-card"><strong>Pack a light layer, even in June</strong><p>The wind picks up fast above the tree line. A thin shell has saved my hike more than once.</p></div></div><button class="text-button" data-action="addTip">＋ Share a practical tip</button></div></div><div class="profile-block"><h2>Trail friends</h2><div class="friend-list" id="profileFriends"></div></div></div></div></section>
+    </main>
+  </div>
+  <nav class="mobile-nav" aria-label="Mobile navigation"><button class="active" data-view="explore"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Explore</button><button data-view="community"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M3 19a6 6 0 0 1 12 0m3-13a3 3 0 0 1 0 6m3 7a5 5 0 0 0-3-4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Circles</button><button data-view="profile"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5.2 20a6.8 6.8 0 0 1 13.6 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Profile</button></nav>
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-label="Route details"><div class="modal" id="modal"></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const routes = [
+      {id:"vikos",name:"Vikos Gorge Traverse",region:"Epirus",place:"Zagori · Epirus",level:"Intermediate",km:12.4,time:"5.5 hr",elev:680,weather:"☀ 21°",interest:24,crew:"group",hazard:false,days:1,image:"https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=900&q=82",description:"Follow an ancient stone path into one of the world's deepest gorges. The route links the quiet villages of Monodendri and Vikos, with sweeping views and a cool river crossing at the bottom.",gear:["Hiking boots","2L water","Sun protection","Trekking poles"],needed:"Water filter",lodging:[["Astraka Mountain Refuge","1,950 m · 6 beds · From €18"],["Aristi Mountain Resort","Aristi village · From €92"]]},
+      {id:"samaria",name:"Samaria Gorge",region:"Crete",place:"Chania · Crete",level:"Intermediate",km:16, time:"6 hr",elev:1250,weather:"☀ 25°",interest:38,crew:"group",hazard:false,days:1,image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=82",description:"A classic descent from the Omalos plateau through pine forest and narrow rock passages to the Libyan Sea. The trail ends at Agia Roumeli, where a ferry connects you back along the coast.",gear:["Hiking boots","2.5L water","Sun protection","Snacks"],needed:"Trekking poles",lodging:[["Samaria Hotel","Agia Roumeli · From €54"],["Omalos Mountain House","Omalos · From €68"]]},
+      {id:"olympus",name:"Mount Olympus · Mytikas",region:"Thessaly",place:"Litochoro · Thessaly",level:"Advanced",km:18.2,time:"9 hr",elev:1918,weather:"⛈ Storm",interest:17,crew:"group",hazard:true,days:2,image:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=82",description:"A demanding high-alpine ascent to Greece's highest summit. Exposed scrambling and fast-changing mountain weather make this a route for experienced hikers with proper equipment and a close eye on conditions.",gear:["Mountaineering boots","3L water","Helmet","Rain shell","Headlamp"],needed:"Helmet",lodging:[["Spilios Agapitos Refuge","2,100 m · 110 beds · From €15"],["Prionia Guesthouse","Trailhead · From €74"]]},
+      {id:"menalon",name:"Menalon Trail · Stemnitsa",region:"Peloponnese",place:"Arcadia · Peloponnese",level:"Beginner",km:8.5,time:"3 hr",elev:320,weather:"☀ 23°",interest:12,crew:"solo",hazard:false,days:1,image:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=82",description:"An easy-going section of the award-winning Menalon Trail, winding through fir woods, old stone villages and the Lousios river valley. A lovely first taste of the Arcadian mountains.",gear:["Trail shoes","1.5L water","Light layer","Snacks"],needed:"Trail shoes",lodging:[["Guesthouse Stemnitsa","Village centre · From €62"],["Dimitsana Archontiko","Dimitsana · From €78"]]},
+      {id:"amorgos",name:"Amorgos Coastal Path",region:"Cyclades",place:"Aegiali · Amorgos",level:"Beginner",km:7.2,time:"2.5 hr",elev:410,weather:"☀ 24°",interest:19,crew:"solo",hazard:false,days:1,image:"https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=900&q=82",description:"A sunlit island walk linking Aegiali's fishing harbour with the hilltop monastery of Panagia Hozoviotissa. Sea views follow you the whole way; take your time at the shaded village kafeneio.",gear:["Trail shoes","1.5L water","Sun hat","Swimwear"],needed:"Sun hat",lodging:[["Aegialis Hotel & Spa","Aegiali bay · From €118"],["Kapsaliani Village Rooms","Chora · From €59"]]},
+      {id:"pindus",name:"Pindus Ridge Walk",region:"Epirus",place:"Valia Calda · Epirus",level:"Advanced",km:21,time:"8 hr",elev:1120,weather:"☁ 16°",interest:8,crew:"solo",hazard:false,days:2,image:"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=82",description:"A remote ridge route through the Pindus mountains and the old-growth forests of Valia Calda. Expect solitude, long views and a proper day out; navigation skills are essential.",gear:["Hiking boots","3L water","Map & compass","Rain shell","First aid kit"],needed:"Map & compass",lodging:[["Vovousa Guesthouse","Vovousa village · From €56"],["Valia Calda Refuge","Metsovo area · Call ahead"]]}
+    ];
+    const people = [
+      {name:"Eleni Papadopoulos",place:"Zagori local · Epirus",img:"https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=100&q=75"},
+      {name:"Nikos Petrou",place:"Planning Samaria this weekend",img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=75"},
+      {name:"Maria Kosta",place:"Gear sharer · Ioannina",img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=75"},
+      {name:"Theo Andreadis",place:"Recently walked Menalon",img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=75"}
+    ];
+    const state = {region:"all",level:"all",travel:"any",interested:new Set(),view:"explore",detailTab:"route",selectedRoute:null,addedFriends:new Set()};
+    const icons = {
+      distance:'<svg viewBox="0 0 24 24" fill="none"><path d="M3 17 9 7l4 6 3-4 5 8H3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+      time:'<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+      warning:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 3 2.8 19h18.4L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v4m0 3h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+      heart:'<svg viewBox="0 0 24 24" fill="none"><path d="M20.8 8.8c0 4.3-8.8 10-8.8 10s-8.8-5.7-8.8-10a4.8 4.8 0 0 1 8.8-2.6 4.8 4.8 0 0 1 8.8 2.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+      close:'<svg viewBox="0 0 24 24" fill="none"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+    };
+    function filteredRoutes() { return routes.filter(route => (state.region === "all" || route.region === state.region) && (state.level === "all" || route.level === state.level) && (state.travel === "any" || route.crew === state.travel)); }
+    function renderRoutes() {
+      const matches = filteredRoutes();
+      document.getElementById("routeSubheading").textContent = `${matches.length} trail${matches.length === 1 ? "" : "s"} worth taking the long way for`;
+      const grid = document.getElementById("routeGrid");
+      if (!matches.length) { grid.innerHTML = '<div class="empty-state"><strong>No trails match just yet.</strong>Try widening your filters to find another way out there.</div>'; return; }
+      grid.innerHTML = matches.map(route => {
+        const interested = state.interested.has(route.id);
+        const count = route.interest + (interested ? 1 : 0);
+        return `<article class="route-card"><div class="route-photo" style="background-image:url('${route.image}')"><span class="route-region">${route.region}</span><span class="photo-weather">${route.weather}</span></div><div class="route-content"><div class="route-title-row"><div><h3 class="route-title">${route.name}</h3><p class="route-location">${route.place}</p></div><button class="save-button ${interested ? "is-interested" : ""}" data-interest="${route.id}" aria-label="${interested ? "Remove interest" : "Interested in"} ${route.name}" title="Interested">${icons.heart}</button></div><div class="route-stats"><span>${icons.distance}${route.km} km</span><span>${icons.time}${route.time}</span><span>↑ ${route.elev} m</span></div><div class="route-footer"><span class="difficulty ${route.level === "Advanced" ? "advanced" : ""}">${route.level}</span>${route.hazard ? `<span class="blocked-note">${icons.warning}Unsafe today</span>` : `<span class="interested-count">${count} interested</span>`}<button class="details-button" data-route="${route.id}">Details <span aria-hidden="true">↗</span></button></div></div></article>`;
+      }).join("");
+    }
+    function renderFriends(targetId) {
+      const target = document.getElementById(targetId);
+      target.innerHTML = people.map((person,index) => `<div class="friend-row"><img class="avatar" src="${person.img}" alt=""><div><strong>${person.name}</strong><small>${person.place}</small></div><button class="friend-add ${state.addedFriends.has(index) ? "added" : ""}" data-friend="${index}">${state.addedFriends.has(index) ? "Added ✓" : "＋ Add"}</button></div>`).join("");
+    }
+    function renderAllFriends() { renderFriends("profileFriends"); renderFriends("communityFriends"); }
+    function setView(view) {
+      state.view = view;
+      document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === `${view}View`));
+      document.querySelectorAll("[data-view]").forEach(el => el.classList.toggle("active", el.dataset.view === view));
+      document.getElementById("breadcrumb").innerHTML = `${view === "explore" ? "Discover" : view === "community" ? "Community" : "Your profile"} <span style="padding:0 6px;color:#b1b8b0">/</span> Greece`;
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    function openRoute(routeId) {
+      const route = routes.find(item => item.id === routeId); if (!route) return;
+      state.selectedRoute = route; state.detailTab = "route";
+      renderRouteModal(); document.getElementById("modalBackdrop").classList.add("open"); document.body.style.overflow = "hidden";
+    }
+    function renderRouteModal() {
+      const route = state.selectedRoute; const interested = state.interested.has(route.id);
+      const panel = state.detailTab === "gear" ? `<h3>Pack for this trail</h3><div class="gear-list">${route.gear.map(item=>`<span class="gear-chip">✓ ${item}</span>`).join("")}${route.needed ? `<span class="gear-chip needed">Need to borrow: ${route.needed}</span>` : ""}</div>${route.needed ? `<div class="borrow-box"><span>Missing something? A hiker nearby has one to lend.</span><button data-message="Maria K.">Ask the community</button></div>` : ""}` : state.detailTab === "stay" ? `<h3>Rest stops along the way</h3>${route.lodging.map(item=>`<div class="lodging-row"><span class="lodging-icon"><svg viewBox="0 0 24 24" fill="none"><path d="m3 11 9-7 9 7v9H3v-9Zm6 9v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><div><strong>${item[0]}</strong><small>${item[1]}</small></div></div>`).join("")}` : `<h3>Route overview</h3><p style="color:var(--muted);font-size:11px;line-height:1.55;margin:0">${route.days > 1 ? "A multi-day adventure with places to rest along the way." : "A beautiful day on the trail. Set your pace and enjoy the view."} ${route.hazard ? "Conditions are currently severe; this route is blocked today." : "Check local conditions before setting off."}</p>`;
+      document.getElementById("modal").innerHTML = `<div class="modal-hero" style="background-image:url('${route.image}')"><button class="modal-close" aria-label="Close">${icons.close}</button><div class="modal-title-over"><span>${route.place} · ${route.level}</span><h2>${route.name}</h2></div></div><div class="modal-body"><div class="modal-stats"><span><strong>${route.km} km</strong>Distance</span><span><strong>${route.time}</strong>Duration</span><span><strong>${route.elev} m</strong>Elevation</span><span><strong>${route.weather}</strong>Forecast</span></div><p class="modal-description">${route.description}</p>${route.hazard ? `<div class="alert-inline">${icons.warning}<span><strong>Severe weather warning.</strong> This route is blocked today. Please choose another trail and check conditions again later.</span></div>` : ""}<div class="detail-tabs"><button class="detail-tab ${state.detailTab === "route" ? "active" : ""}" data-tab="route">Overview</button><button class="detail-tab ${state.detailTab === "gear" ? "active" : ""}" data-tab="gear">What to pack</button><button class="detail-tab ${state.detailTab === "stay" ? "active" : ""}" data-tab="stay">Places to stay</button></div><div class="tab-panel">${panel}</div><div class="modal-actions"><button class="${route.hazard ? "unsafe" : ""}" ${route.hazard ? "disabled" : ""} data-action="plan">${route.hazard ? "Unavailable today" : "Plan this hike"}</button><button class="secondary" data-interest="${route.id}">${interested ? "♥ Interested" : "♡ Interested"} · ${route.interest + (interested ? 1 : 0)}</button></div></div>`;
+    }
+    function closeModal() { document.getElementById("modalBackdrop").classList.remove("open"); document.body.style.overflow = ""; }
+    function showMessage(name) {
+      const modal = document.getElementById("modal");
+      modal.innerHTML = `<div class="message-content"><button class="modal-close" aria-label="Close" style="position:sticky;float:right;top:0">${icons.close}</button><h2>Message ${name}</h2><p>Connect with local hikers about borrowing gear or sharing trail plans.</p><div class="message-thread" id="messageThread"><div class="message-bubble">Hi there! Happy to help with trail questions or gear. What are you looking for?</div></div><form class="message-form" id="messageForm"><input id="messageInput" placeholder="Write a message..." aria-label="Write a message" required><button type="submit">Send</button></form></div>`;
+      document.getElementById("modalBackdrop").classList.add("open"); document.body.style.overflow = "hidden";
+    }
+    let toastTimer;
+    function toast(message) { const el=document.getElementById("toast"); el.textContent=message; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),2600); }
+    document.addEventListener("click", event => {
+      const viewButton=event.target.closest("[data-view]"); if(viewButton){setView(viewButton.dataset.view);return;}
+      const routeButton=event.target.closest("[data-route]"); if(routeButton){openRoute(routeButton.dataset.route);return;}
+      const interestButton=event.target.closest("[data-interest]"); if(interestButton){const id=interestButton.dataset.interest;state.interested.has(id)?state.interested.delete(id):state.interested.add(id);renderRoutes();if(state.selectedRoute?.id===id)renderRouteModal();return;}
+      const tabButton=event.target.closest("[data-tab]"); if(tabButton){state.detailTab=tabButton.dataset.tab;renderRouteModal();return;}
+      const messageButton=event.target.closest("[data-message]");if(messageButton){showMessage(messageButton.dataset.message);return;}
+      const friendButton=event.target.closest("[data-friend]");if(friendButton){const id=Number(friendButton.dataset.friend);state.addedFriends.has(id)?state.addedFriends.delete(id):state.addedFriends.add(id);renderAllFriends();return;}
+      const closeButton=event.target.closest(".modal-close");if(closeButton){closeModal();return;}
+      const action=event.target.closest("[data-action]")?.dataset.action;
+      if(action==="plan")toast("Your hike plan is ready to shape. Stay safe out there!");
+      if(action==="discover"){document.getElementById("regionFilter").focus();document.querySelector(".filter-panel").scrollIntoView({behavior:"smooth",block:"center"});}
+      if(action==="clearFilters"){state.region="all";state.level="all";state.travel="any";document.getElementById("regionFilter").value="all";document.querySelectorAll("[data-level]").forEach(el=>el.classList.toggle("selected",el.dataset.level==="all"));document.querySelectorAll("[data-travel]").forEach(el=>el.classList.toggle("selected",el.dataset.travel==="any"));renderRoutes();}
+      if(action==="weather")toast("Zagori: sunny, 22°. No active local alerts.");
+      if(action==="notifications")toast("You're all caught up on trail updates.");
+      if(action==="sharePhoto")document.getElementById("photoInput").click();
+      if(action==="addTip"){const text=prompt("Share a practical trail tip:");if(text?.trim()){const card=document.createElement("div");card.className="tip-card";const strong=document.createElement("strong");strong.textContent="A tip from Alex";const p=document.createElement("p");p.textContent=text.trim();card.append(strong,p);document.getElementById("tipsList").prepend(card);toast("Your trail tip has been added.");}}
+    });
+    document.getElementById("regionFilter").addEventListener("change",event=>{state.region=event.target.value;renderRoutes();});
+    document.querySelectorAll("[data-level]").forEach(button=>button.addEventListener("click",()=>{state.level=button.dataset.level;document.querySelectorAll("[data-level]").forEach(item=>item.classList.toggle("selected",item===button));renderRoutes();}));
+    document.querySelectorAll("[data-travel]").forEach(button=>button.addEventListener("click",()=>{state.travel=button.dataset.travel;document.querySelectorAll("[data-travel]").forEach(item=>item.classList.toggle("selected",item===button));renderRoutes();}));
+    document.getElementById("modalBackdrop").addEventListener("click",event=>{if(event.target.id==="modalBackdrop")closeModal();});
+    document.addEventListener("keydown",event=>{if(event.key==="Escape")closeModal();});
+    document.getElementById("photoInput").addEventListener("change",event=>{const file=event.target.files[0];if(!file)return;const photo=document.createElement("div");photo.className="log-photo";photo.style.backgroundImage=`url("${URL.createObjectURL(file)}")`;const label=document.createElement("span");label.textContent="New trail log";photo.append(label);document.getElementById("photoLogs").prepend(photo);toast("Your photo log has been added.");event.target.value="";});
+    document.addEventListener("submit",event=>{if(event.target.id==="messageForm"){event.preventDefault();const input=document.getElementById("messageInput");const text=input.value.trim();if(!text)return;const bubble=document.createElement("div");bubble.className="message-bubble mine";bubble.textContent=text;document.getElementById("messageThread").append(bubble);input.value="";document.getElementById("messageThread").scrollTop=9999;}});
+    renderRoutes();renderAllFriends();
+  </script>
+</body>
+</html>
