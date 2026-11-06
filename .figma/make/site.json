@@ -1,0 +1,7 @@
+{
+  "title": "Monopati",
+  "description": "Η εφαρμογή Monopati",
+  "language": "el",
+  "robots": { "index": false },
+  "accessibility": { "addBypassLinks": true }
+}
