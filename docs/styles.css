@@ -1,0 +1,2112 @@
+/* ==========================================================================
+   TREKO — interactive mockup
+   --------------------------------------------------------------------------
+   Ένα μόνο αρχείο CSS. Χωρίς Tailwind, χωρίς build, χωρίς pnpm.
+   Αν θέλεις να αλλάξεις χρώματα ή γραμματοσειρά, άλλαξε ΜΟΝΟ το μπλοκ
+   "DESIGN TOKENS" παρακάτω — όλη η εφαρμογή ακολουθεί.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS  (παλέτα & γραμματοσειρές από το Figma)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Παλέτα */
+  --forest: #04382a; /* σκούρο πράσινο — κείμενο, κουμπιά */
+  --cream: #f7efc8; /* κρεμ — κείμενο πάνω σε σκούρο */
+  --paper: #faf5dc; /* φόντο σελίδας */
+  --card: #fffdf2; /* φόντο καρτών & πεδίων */
+  --sand: #efe6b8; /* δεύτερο φόντο / badges */
+  --line: #ddd3a3; /* περιγράμματα */
+  --bark: #524a3f; /* δεύτερο κείμενο */
+  --moss: #3f6b4f; /* εναλλακτικά avatar */
+  --alert: #c4532d; /* κόκκινη κουκκίδα ειδοποίησης */
+  --danger: #a33a1c; /* σφάλματα & ακύρωση */
+  --rain-bg: #dfe7f0; /* badge βροχής */
+  --rain-fg: #1d3a5a;
+  --date: #7a5b1f; /* ημερομηνία εκδρομής */
+  --full-bg: #eadfd5; /* badge "πλήρης" */
+  --full-fg: #7a3b22;
+  --hero-label: #f1e2af;
+
+  /* Γραμματοσειρές */
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-display: Jua, var(--font);
+
+  color: var(--forest);
+  background: var(--paper);
+  font-family: var(--font);
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET  (αντικαθιστά το preflight του Tailwind)
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border: 0 solid var(--line);
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--forest);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+svg {
+  height: revert-layer;
+}
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background: transparent;
+  border-radius: 0;
+}
+button,
+[role="button"] {
+  cursor: pointer;
+  text-align: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+select,
+input[type="date"],
+input[type="time"] {
+  appearance: none;
+  -webkit-appearance: none;
+}
+input::placeholder,
+textarea::placeholder {
+  color: inherit;
+  opacity: 0.6;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+b,
+strong {
+  font-weight: 600;
+}
+small {
+  font-size: inherit;
+}
+i {
+  font-style: normal;
+}
+:where(input, textarea, select):focus {
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. ΒΑΣΙΚΗ ΔΟΜΗ
+   -------------------------------------------------------------------------- */
+#root {
+  min-height: 100dvh;
+}
+.paper-page {
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--forest);
+}
+
+/* Κουμπιά */
+.button {
+  width: 100%;
+  border-radius: 16px;
+  padding: 16px 24px;
+  font: 600 16px/1.3 var(--font);
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
+}
+.button:active {
+  transform: scale(0.985);
+}
+.button:disabled {
+  opacity: 0.5;
+}
+.button-dark {
+  background: var(--forest);
+  color: var(--cream);
+}
+.button-light {
+  background: var(--cream);
+  color: var(--forest);
+}
+.button-outline {
+  border: 1.5px solid var(--cream);
+  color: var(--cream);
+}
+.text-button {
+  align-self: center;
+  color: var(--bark);
+  font: 600 14px/1.3 var(--font);
+}
+.light-text {
+  color: var(--cream);
+}
+
+/* --------------------------------------------------------------------------
+   4. ΟΘΟΝΗ ΚΑΛΩΣΟΡΙΣΜΑΤΟΣ
+   -------------------------------------------------------------------------- */
+.welcome {
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--forest);
+  color: var(--cream);
+}
+.welcome-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2.6dvh, 23px);
+  padding: clamp(10px, 2dvh, 18px) 10px clamp(18px, 4dvh, 35px) 35px;
+}
+.brand {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 42px;
+}
+.brand-circle {
+  position: absolute;
+  inset: 0;
+  width: 42px;
+  height: 42px;
+}
+.brand-mountain,
+.brand-word {
+  position: absolute;
+  background: var(--forest);
+  mask-mode: alpha;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+.brand-mountain {
+  left: 11.31px;
+  top: 7.28px;
+  width: 19.628px;
+  height: 6.612px;
+  mask-image: url("assets/592df.png");
+  -webkit-mask-image: url("assets/592df.png");
+  mask-position: -1.664px -4.449px;
+  -webkit-mask-position: -1.664px -4.449px;
+  mask-size: 22.705px 18.172px;
+  -webkit-mask-size: 22.705px 18.172px;
+}
+.brand-word {
+  left: 3px;
+  top: 15.64px;
+  width: 35.97px;
+  height: 10.77px;
+  mask-image: url("assets/5591d.png");
+  -webkit-mask-image: url("assets/5591d.png");
+  mask-position: 1.372px 1.081px;
+  -webkit-mask-position: 1.372px 1.081px;
+  mask-size: 33.226px 8.608px;
+  -webkit-mask-size: 33.226px 8.608px;
+}
+.hero-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  container-type: size;
+  display: flex;
+  justify-content: center;
+}
+.hero-art {
+  position: relative;
+  flex: none;
+  width: min(100cqw, 100cqh * 321 / 386);
+  aspect-ratio: 321 / 386;
+  overflow: hidden;
+  border: 1px solid var(--cream);
+  border-radius: 15px;
+  container-type: inline-size;
+}
+.hero-art img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.hero-label {
+  position: absolute;
+  z-index: 1;
+  top: 4.15%;
+  left: 0;
+  width: 100%;
+  height: 7.52%;
+  display: grid;
+  place-items: center;
+  color: var(--hero-label);
+  font-family: var(--font-display);
+  font-size: 7.48cqw;
+  line-height: 1.2;
+}
+.welcome-copy {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 16px;
+}
+.welcome-copy h1 {
+  max-width: 520px;
+  font: 700 30px/1.2 var(--font);
+}
+.welcome-copy p {
+  max-width: 560px;
+  opacity: 0.8;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.welcome-actions {
+  flex: none;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   5. ΦΟΡΜΕΣ (εγγραφή / σύνδεση) & ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ
+   -------------------------------------------------------------------------- */
+.form-layout,
+.preferences-layout {
+  min-height: 100dvh;
+  padding: 8px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.back-button {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.back-button img {
+  width: 20px;
+  height: 20px;
+}
+.signup-heading {
+  min-height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.signup-heading h1 {
+  max-width: 280px;
+  font: 700 24px/1.2 var(--font);
+}
+.signup-heading p,
+.preferences-heading p {
+  color: var(--bark);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.signup-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.field > span,
+.filter-group h3 {
+  font: 600 13px/1.3 var(--font);
+}
+.field small {
+  color: var(--bark);
+  font: 400 12px/1.3 var(--font);
+}
+.input-shell {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.input-shell img {
+  width: 20px;
+  height: 20px;
+}
+.input-shell input {
+  min-width: 0;
+  flex: 1;
+  color: var(--bark);
+  background: transparent;
+  outline: none;
+  font: 400 15px/1.3 var(--font);
+}
+.input-shell input::placeholder {
+  color: var(--bark);
+  opacity: 0.7;
+}
+.terms {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 20px;
+  color: var(--bark);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.terms input {
+  position: absolute;
+  opacity: 0;
+}
+.check {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 1.5px solid var(--forest);
+}
+.terms input:checked + .check {
+  background: var(--forest);
+}
+.check img {
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+}
+.terms input:checked + .check img {
+  opacity: 1;
+}
+.signup-bottom {
+  margin-top: auto;
+  padding-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.privacy-note {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--sand);
+  font: 500 12px/1.3 var(--font);
+}
+.privacy-note img {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.login-link {
+  text-align: center;
+  color: var(--bark);
+  font-size: 14px;
+  line-height: 1.3;
+}
+.login-link button {
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.preferences-layout {
+  gap: 22px;
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.progress-row > span {
+  flex: none;
+  color: var(--bark);
+  font: 600 13px/1.3 var(--font);
+}
+.progress {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+}
+.progress i {
+  flex: 1;
+  height: 5px;
+  background: var(--line);
+  border-radius: 3px;
+}
+.progress i.done {
+  background: var(--forest);
+}
+.preferences-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.preferences-heading h1 {
+  font: 700 28px/1.2 var(--font);
+}
+.landscape-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.landscape-option {
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--forest);
+  transition: 0.15s;
+}
+.landscape-option > span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--sand);
+  flex: none;
+}
+.landscape-option img {
+  width: 22px;
+  height: 22px;
+}
+.landscape-option b {
+  font: 600 16px/1.3 var(--font);
+  text-align: left;
+}
+.landscape-option.active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--cream);
+}
+.landscape-option.active > span {
+  background: var(--cream);
+}
+.preferences-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* --------------------------------------------------------------------------
+   6. ΑΡΧΙΚΗ & ΑΝΑΖΗΤΗΣΗ
+   -------------------------------------------------------------------------- */
+.home-layout {
+  --page-x: 20px;
+  min-height: 100dvh;
+  padding: 8px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1050px;
+  margin: 0 auto;
+}
+.preferences-layout {
+  --page-x: 24px;
+}
+.home-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.home-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-heading span {
+  color: var(--bark);
+  font: 500 14px/1.3 var(--font);
+}
+.home-heading h1 {
+  font: 700 26px/1.3 var(--font);
+}
+.circle-button {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  border-radius: 999px;
+}
+.circle-button img {
+  width: 21px;
+  height: 21px;
+}
+.circle-button.dark {
+  background: var(--forest);
+  color: var(--cream);
+}
+.circle-button .dot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  background: var(--alert);
+}
+.search-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 8px 8px 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.search-box > img {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  outline: none;
+  color: var(--bark);
+  font-size: 15px;
+}
+.search-box button {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--forest);
+  border-radius: 999px;
+}
+.search-box button img {
+  width: 20px;
+  height: 20px;
+}
+.search-box .search-trigger,
+.search-box .clear-search {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border-radius: 0;
+}
+.search-box .search-trigger {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  text-align: left;
+  color: var(--bark);
+  opacity: 0.75;
+  font-size: 15px;
+  line-height: 1.3;
+}
+.search-box .clear-search {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  color: var(--bark);
+}
+.search-box .filter-button {
+  position: relative;
+}
+.filter-button .count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 99px;
+  background: var(--alert);
+  color: var(--card);
+  font: 700 11px/1 var(--font);
+}
+.category-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-right: calc(-1 * var(--page-x));
+  padding-right: var(--page-x);
+}
+.category-scroll::-webkit-scrollbar,
+.trip-scroll::-webkit-scrollbar {
+  display: none;
+}
+.category-scroll button,
+.filter-chips button {
+  flex: none;
+  padding: 9px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--bark);
+  font: 500 14px/1.3 var(--font);
+}
+.category-scroll button.active,
+.filter-chips button.selected {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--cream);
+}
+.category-scroll button.removable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.section-title h2 {
+  font: 700 19px/1.3 var(--font);
+}
+.section-title button {
+  color: var(--bark);
+  font: 600 13px/1.3 var(--font);
+  flex: none;
+}
+.context-note {
+  margin-top: -6px;
+  color: var(--bark);
+  font-size: 13px;
+}
+.prefs-callout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--sand);
+  color: var(--forest);
+  font: 600 13px/1.3 var(--font);
+  text-align: left;
+}
+.prefs-callout img {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.prefs-callout span {
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   7. ΚΑΡΤΕΣ ΠΡΟΟΡΙΣΜΩΝ
+   -------------------------------------------------------------------------- */
+.feed {
+  display: grid;
+  gap: 14px;
+}
+.feed-list,
+.results-grid,
+.trip-list {
+  display: grid;
+  gap: 12px;
+}
+.destination-card {
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+}
+.destination-photo {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+}
+.destination-photo > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.favorite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(247, 239, 200, 0.95);
+}
+.favorite img {
+  width: 18px;
+  height: 18px;
+}
+.favorite.active {
+  background: var(--forest);
+  border-color: var(--forest);
+}
+.favorite.active img {
+  filter: brightness(0) invert(1);
+}
+.weather {
+  position: absolute;
+  left: 12px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--forest);
+  font: 600 12px/1.3 var(--font);
+}
+.weather img,
+.weather svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.weather.muted {
+  opacity: 0.85;
+}
+.weather.rainy,
+.inline-weather.rainy {
+  background: var(--rain-bg);
+  color: var(--rain-fg);
+}
+.destination-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+.destination-body h3,
+.compact h3 {
+  font: 700 18px/1.3 var(--font);
+}
+.destination-body p {
+  color: var(--bark);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+.meta span {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--bark);
+  font: 500 12px/1.3 var(--font);
+}
+.meta img {
+  width: 14px;
+  height: 14px;
+}
+.reason {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 12px;
+  background: var(--sand);
+  border-radius: 12px;
+  font: 500 12px/1.3 var(--font);
+}
+.reason img,
+.reason svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.reason.warn {
+  background: var(--rain-bg);
+  color: var(--rain-fg);
+}
+.compact {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 10px;
+  border-radius: 22px;
+}
+.compact-photo {
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: 16px;
+  object-fit: cover;
+}
+.compact > div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.compact h3 {
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.compact p {
+  color: var(--bark);
+  font-size: 12px;
+}
+.compact b {
+  font: 600 12px/1.3 var(--font);
+}
+.inline-weather {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--cream);
+  font: 600 11px/1.3 var(--font);
+}
+.inline-weather svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.favorite.inline,
+.favorite.bar {
+  position: static;
+  flex: none;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.favorite.bar {
+  width: 40px;
+  height: 40px;
+}
+.favorite.inline.active,
+.favorite.bar.active {
+  background: var(--forest);
+}
+
+/* --------------------------------------------------------------------------
+   8. ΚΑΡΤΕΣ ΕΚΔΡΟΜΩΝ
+   -------------------------------------------------------------------------- */
+.trip-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  margin-right: calc(-1 * var(--page-x));
+  padding: 2px var(--page-x) 4px 0;
+  scrollbar-width: none;
+}
+.trip-scroll .trip-card {
+  flex: 0 0 280px;
+}
+.trip-card {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  color: var(--forest);
+}
+.trip-card > img {
+  width: 84px;
+  height: 100px;
+  flex: none;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.trip-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.trip-date {
+  color: var(--date);
+  font: 600 12px/1.3 var(--font);
+  text-transform: capitalize;
+}
+.trip-card h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 16px/1.3 var(--font);
+}
+.trip-card p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--bark);
+  font-size: 12px;
+}
+.trip-card-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.status {
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: var(--sand);
+  font: 600 11px/1.2 var(--font);
+  white-space: nowrap;
+}
+.status.joined {
+  background: var(--forest);
+  color: var(--cream);
+}
+.status.full {
+  background: var(--full-bg);
+  color: var(--full-fg);
+}
+.avatars {
+  display: flex;
+}
+.avatars i {
+  width: 26px;
+  height: 26px;
+  margin-left: -7px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--cream);
+  font: 700 9px/1 var(--font);
+}
+.avatars i:first-child {
+  margin-left: 0;
+}
+.avatars i:nth-child(2n) {
+  background: var(--moss);
+}
+.avatars i.more {
+  background: var(--line);
+  color: var(--forest);
+}
+
+/* --------------------------------------------------------------------------
+   9. ΣΕΛΙΔΕΣ ΛΕΠΤΟΜΕΡΕΙΩΝ
+   -------------------------------------------------------------------------- */
+.detail-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.detail-bar > div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.detail-bar b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 15px/1.3 var(--font);
+}
+.detail-bar small {
+  color: var(--bark);
+  font-size: 12px;
+}
+.detail-hero {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  aspect-ratio: 16 / 10;
+  max-height: 420px;
+}
+.detail-hero.small {
+  aspect-ratio: 16 / 7;
+}
+.detail-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.detail-hero .weather {
+  bottom: 14px;
+}
+.detail-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detail-intro h1 {
+  font: 700 26px/1.2 var(--font);
+}
+.detail-intro p {
+  color: var(--bark);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.detail-intro .area {
+  margin-top: -4px;
+  font-size: 13px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tags span {
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: var(--sand);
+  font: 600 12px/1.2 var(--font);
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.stat-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+.stat-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+.stat-grid img,
+.stat-grid svg {
+  width: 16px;
+  height: 16px;
+}
+.stat-grid small {
+  color: var(--bark);
+  font-size: 12px;
+}
+.stat-grid b {
+  font: 700 16px/1.3 var(--font);
+}
+.stat-grid.three b {
+  font-size: 22px;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--card);
+}
+.panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 17px/1.3 var(--font);
+}
+.forecast-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(44px, 1fr));
+  gap: 6px;
+  overflow-x: auto;
+}
+.forecast-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: 14px;
+  background: var(--paper);
+  text-transform: capitalize;
+}
+.forecast-day small {
+  color: var(--bark);
+  font-size: 11px;
+}
+.forecast-day b {
+  font: 700 14px/1 var(--font);
+}
+.forecast-day .rain {
+  color: var(--rain-fg);
+}
+.forecast-day.rainy {
+  background: var(--rain-bg);
+}
+.forecast-day.best {
+  background: var(--forest);
+  color: var(--cream);
+}
+.forecast-day.best small {
+  color: var(--cream);
+  opacity: 0.85;
+}
+.highlights {
+  display: grid;
+  gap: 8px;
+}
+.highlights li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+}
+.highlights li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--forest);
+}
+.detail-trips {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.button.with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.button-danger {
+  background: var(--danger);
+  color: var(--card);
+}
+.button-outline-dark {
+  border: 1.5px solid var(--forest);
+  color: var(--forest);
+  background: var(--paper);
+}
+
+/* --------------------------------------------------------------------------
+   10. ΕΚΔΡΟΜΕΣ: tabs, συμμετέχοντες, συνομιλία
+   -------------------------------------------------------------------------- */
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--sand);
+}
+.segmented button {
+  padding: 10px;
+  border-radius: 12px;
+  color: var(--bark);
+  font: 600 14px/1.2 var(--font);
+  text-align: center;
+}
+.segmented button.active {
+  background: var(--card);
+  color: var(--forest);
+  box-shadow: 0 2px 8px rgba(4, 56, 42, 0.08);
+}
+.info-list > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.info-list > div > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.info-list span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.info-list b {
+  font: 600 14px/1.3 var(--font);
+}
+.info-list b:first-letter {
+  text-transform: uppercase;
+}
+.info-list small {
+  color: var(--bark);
+  font-size: 12px;
+}
+.capacity {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--sand);
+}
+.capacity i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--forest);
+}
+.people {
+  display: grid;
+  gap: 8px;
+}
+.people li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.people i {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sand);
+  font: 700 11px/1 var(--font);
+}
+.people small {
+  margin-left: auto;
+  color: var(--bark);
+  font: 600 11px/1 var(--font);
+}
+.messages {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.message {
+  align-self: flex-start;
+  max-width: 82%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--sand);
+}
+.message.mine {
+  align-self: flex-end;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--forest);
+  color: var(--cream);
+}
+.message b {
+  font: 700 12px/1.2 var(--font);
+}
+.message p {
+  font-size: 14px;
+  line-height: 1.4;
+}
+.message small {
+  align-self: flex-end;
+  opacity: 0.7;
+  font-size: 10px;
+}
+.chat-input {
+  display: flex;
+  gap: 8px;
+}
+.chat-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  outline: none;
+}
+.chat-input button {
+  width: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--forest);
+  color: var(--cream);
+}
+.chat-input button:disabled {
+  opacity: 0.4;
+}
+.trip-actions {
+  position: sticky;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  z-index: 5;
+  margin: 0 calc(-1 * var(--page-x));
+  padding: 10px var(--page-x);
+  background: linear-gradient(to top, var(--paper) 75%, rgba(250, 245, 220, 0));
+}
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+.confirm p {
+  font: 600 14px/1.4 var(--font);
+}
+
+/* Φόρμα νέας εκδρομής */
+.trip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.input-shell select,
+.input-shell input[type="date"],
+.input-shell input[type="time"] {
+  min-width: 0;
+  flex: 1;
+  background: transparent;
+  outline: none;
+  color: var(--forest);
+  font: 400 15px/1.3 var(--font);
+}
+.input-shell > svg {
+  flex: none;
+}
+.field textarea {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  outline: none;
+  resize: vertical;
+  color: var(--forest);
+  font: 400 15px/1.4 var(--font);
+}
+.field.has-error .input-shell {
+  border-color: var(--danger);
+}
+.field small.error {
+  color: var(--danger);
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
+.stepper button {
+  width: 42px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--sand);
+  font: 600 20px/1 var(--font);
+  text-align: center;
+}
+.stepper b {
+  font: 700 18px/1 var(--font);
+}
+
+/* --------------------------------------------------------------------------
+   11. ΦΙΛΤΡΑ, SHEETS, ΕΙΔΟΠΟΙΗΣΕΙΣ, TOAST
+   -------------------------------------------------------------------------- */
+.filter-layer {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+}
+.scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: rgba(4, 56, 42, 0.55);
+}
+.filter-sheet {
+  position: absolute;
+  inset: auto 0 0;
+  max-height: calc(100dvh - 60px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 10px 20px calc(28px + env(safe-area-inset-bottom));
+  background: var(--paper);
+  border-radius: 28px 28px 0 0;
+}
+.grabber {
+  width: 40px;
+  height: 4px;
+  flex: none;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: var(--line);
+}
+.filter-sheet header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.filter-sheet h2 {
+  font: 700 22px/1.3 var(--font);
+}
+.filter-sheet header button {
+  color: var(--bark);
+  font: 600 13px/1.3 var(--font);
+}
+.sheet-close {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sand);
+  color: var(--forest);
+}
+.sheet-text {
+  color: var(--bark);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font: 500 14px/1.3 var(--font);
+  cursor: pointer;
+}
+.toggle-row input {
+  position: absolute;
+  opacity: 0;
+}
+.toggle-row i {
+  position: relative;
+  width: 46px;
+  height: 28px;
+  flex: none;
+  border-radius: 99px;
+  background: var(--line);
+}
+.toggle-row i::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--card);
+  transition: 0.2s;
+}
+.toggle-row input:checked + i {
+  background: var(--forest);
+}
+.toggle-row input:checked + i::after {
+  transform: translateX(18px);
+}
+.notification-list {
+  display: grid;
+  gap: 10px;
+}
+.notification {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  text-align: left;
+}
+.notification > span {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sand);
+}
+.notification.warn > span {
+  background: var(--rain-bg);
+  color: var(--rain-fg);
+}
+.notification div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.notification b {
+  font: 600 14px/1.3 var(--font);
+}
+.notification small {
+  color: var(--bark);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.notification > svg {
+  flex: none;
+}
+.toast {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  max-width: calc(100% - 40px);
+  padding: 12px 18px;
+  transform: translateX(-50%);
+  border-radius: 14px;
+  background: var(--forest);
+  color: var(--cream);
+  box-shadow: 0 12px 30px rgba(4, 56, 42, 0.25);
+  font: 500 14px/1.3 var(--font);
+  animation: toast-in 0.2s ease-out;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. ΚΕΛΥΦΟΣ ΜΕΤΑ ΤΗ ΣΥΝΔΕΣΗ: top bar & bottom nav
+   -------------------------------------------------------------------------- */
+.app-shell .paper-page {
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+}
+.app-shell .home-layout,
+.app-shell .preferences-layout {
+  min-height: calc(100dvh - 84px - env(safe-area-inset-bottom));
+}
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: -8px calc(-1 * var(--page-x)) 0;
+  padding: 10px var(--page-x);
+  background: rgba(250, 245, 220, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(221, 211, 163, 0.6);
+}
+.top-bar.stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+.bottom-nav {
+  position: fixed;
+  z-index: 15;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 8px 6px calc(10px + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 24px rgba(4, 56, 42, 0.06);
+}
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--bark);
+  font: 500 11px/1.2 var(--font);
+}
+.bottom-nav button span {
+  width: 48px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  transition: background 0.15s;
+}
+.bottom-nav img {
+  width: 20px;
+  height: 20px;
+}
+.bottom-nav button.active {
+  color: var(--forest);
+  font-weight: 600;
+}
+.bottom-nav button.active span {
+  background: var(--forest);
+  color: var(--cream);
+}
+.bottom-nav button.active img {
+  filter: brightness(0) saturate(100%) invert(93%) sepia(14%) saturate(560%)
+    hue-rotate(5deg);
+}
+
+/* --------------------------------------------------------------------------
+   13. ΚΕΝΕΣ ΚΑΤΑΣΤΑΣΕΙΣ & ΠΡΟΦΙΛ
+   -------------------------------------------------------------------------- */
+.empty-state {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.empty-state > span {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--sand);
+}
+.empty-state > span img {
+  width: 26px;
+  height: 26px;
+}
+.empty-state h2 {
+  font: 700 19px/1.3 var(--font);
+}
+.empty-state p {
+  max-width: 300px;
+  color: var(--bark);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.empty-state .button {
+  max-width: 360px;
+  margin-top: 10px;
+}
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+.avatar {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--forest);
+  color: var(--cream);
+  font: 700 22px/1 var(--font);
+}
+.profile-card h2 {
+  font: 700 18px/1.3 var(--font);
+}
+.profile-card p {
+  color: var(--bark);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.profile-actions {
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+.profile-actions button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  font: 600 15px/1.3 var(--font);
+  text-align: left;
+}
+.profile-actions button + button {
+  border-top: 1px solid var(--line);
+}
+.profile-actions img {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.profile-actions button > svg:first-child {
+  flex: none;
+}
+.profile-actions button > svg:last-child {
+  margin-left: auto;
+  flex: none;
+  color: var(--bark);
+}
+.guest-callout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--forest);
+  color: var(--cream);
+}
+.guest-callout b {
+  font: 700 17px/1.3 var(--font);
+}
+.guest-callout p {
+  opacity: 0.85;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.guest-callout .button {
+  margin-top: 6px;
+}
+.footnote {
+  color: var(--bark);
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.8;
+}
+.remove-favorite {
+  align-self: flex-start;
+  color: var(--forest);
+  font: 600 12px/1.3 var(--font);
+  text-decoration: underline;
+}
+.muted-text {
+  color: var(--bark);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.back-placeholder {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+}
+
+/* --------------------------------------------------------------------------
+   14. ΑΛΛΗΛΕΠΙΔΡΑΣΗ
+   -------------------------------------------------------------------------- */
+.clickable {
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+.clickable:hover {
+  box-shadow: 0 10px 28px rgba(4, 56, 42, 0.08);
+}
+.clickable:active {
+  transform: scale(0.99);
+}
+.clickable:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. ΜΕΓΑΛΕΣ ΟΘΟΝΕΣ (tablet & desktop)
+   -------------------------------------------------------------------------- */
+@media (min-width: 720px) {
+  .welcome-inner {
+    display: grid;
+    grid-template-columns: minmax(300px, 480px) minmax(320px, 600px);
+    grid-template-rows: auto 1fr auto;
+    gap: 30px 60px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 36px;
+    align-items: center;
+    height: 100%;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+  .hero-stage {
+    grid-row: 2 / 4;
+    height: 100%;
+  }
+  .welcome-copy {
+    align-self: end;
+    padding-right: 0;
+  }
+  .welcome-copy h1 {
+    font-size: clamp(34px, 4vw, 52px);
+  }
+  .welcome-actions {
+    width: 100%;
+    align-self: start;
+  }
+  .form-layout,
+  .preferences-layout,
+  .home-layout {
+    padding-top: 28px;
+  }
+  .signup-heading {
+    min-height: 100px;
+  }
+  .feed {
+    grid-template-columns: 1.3fr 1fr;
+    align-items: start;
+  }
+  .compact {
+    flex-direction: row;
+    align-items: center;
+  }
+  .compact-photo {
+    width: 88px;
+    height: 88px;
+    aspect-ratio: auto;
+  }
+  .results-grid,
+  .trip-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .detail-layout {
+    max-width: 860px;
+  }
+  .filter-sheet {
+    inset: 0 0 0 auto;
+    width: min(520px, 100%);
+    max-height: none;
+    border-radius: 28px 0 0 28px;
+    padding: 18px 28px 30px;
+  }
+  .grabber {
+    display: none;
+  }
+  .bottom-nav {
+    left: 50%;
+    right: auto;
+    bottom: 16px;
+    width: min(560px, calc(100% - 32px));
+    transform: translateX(-50%);
+    padding-bottom: 8px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+  }
+  .top-bar {
+    margin-top: -28px;
+    padding-top: 16px;
+  }
+  .app-shell .paper-page {
+    padding-bottom: 112px;
+  }
+  .toast,
+  .trip-actions {
+    bottom: 100px;
+  }
+}
+
+/* Πολύ μεγάλες οθόνες: το feed δύο στηλών αναπνέει */
+@media (min-width: 1100px) {
+  .results-grid,
+  .trip-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ ΠΛΗΡΟΥΣ ΟΘΟΝΗΣ
+   -------------------------------------------------------------------------- */
+.onboarding-page .preferences-layout {
+  padding-top: 18px;
+}
+.landscape-grid.single {
+  grid-template-columns: 1fr;
+}
+.landscape-grid.single .landscape-option {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  column-gap: 14px;
+  row-gap: 2px;
+  align-items: center;
+}
+.landscape-grid.single .landscape-option > span {
+  grid-row: span 2;
+}
+.landscape-option small {
+  opacity: 0.8;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: left;
+}
+.landscape-grid.single .landscape-option b,
+.landscape-grid.single .landscape-option small {
+  justify-self: start;
+  text-align: left;
+}
+.landscape-option > span svg {
+  color: var(--forest);
+}
+
+/* --------------------------------------------------------------------------
+   17. ΟΘΟΝΕΣ ΕΙΣΟΔΟΥ: χωράνε πάντα στο viewport
+   -------------------------------------------------------------------------- */
+.auth-page {
+  height: 100dvh;
+  overflow: hidden;
+}
+.auth-page .form-layout {
+  height: 100%;
+  min-height: 0;
+  gap: clamp(8px, 2.2dvh, 20px);
+  padding-top: clamp(6px, 1dvh, 8px);
+  padding-bottom: clamp(12px, 3dvh, 28px);
+}
+.auth-page .signup-heading {
+  min-height: clamp(56px, 14dvh, 128px);
+}
+.auth-page .fields {
+  gap: clamp(8px, 1.8dvh, 16px);
+}
+.auth-page .field {
+  gap: clamp(4px, 0.9dvh, 8px);
+}
+.auth-page .input-shell {
+  height: clamp(42px, 6.5dvh, 52px);
+}
+.auth-page .terms {
+  margin-top: clamp(10px, 2.2dvh, 20px);
+}
+.auth-page .signup-bottom {
+  padding-top: clamp(10px, 2.5dvh, 26px);
+  gap: clamp(10px, 2.2dvh, 20px);
+}
+.auth-page .signup-form {
+  min-height: 0;
+}
+
+/* --------------------------------------------------------------------------
+   18. ΣΤΕΝΑ ΚΙΝΗΤΑ: η πρόγνωση 7 ημερών να χωράει ολόκληρη χωρίς scroll
+   -------------------------------------------------------------------------- */
+@media (max-width: 460px) {
+  .forecast-row {
+    grid-template-columns: 1.25fr repeat(6, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .forecast-day {
+    padding: 10px 2px;
+  }
+  .forecast-day small {
+    font-size: 10px;
+  }
+}

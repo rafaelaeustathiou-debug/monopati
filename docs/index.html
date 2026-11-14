@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="el">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover: σέβεται το "notch" σε iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#faf5dc" />
+    <meta
+      name="description"
+      content="Treko — προτάσεις εκδρομών στην Ελλάδα, πρόγνωση καιρού και ομαδικές εξορμήσεις."
+    />
+    <title>Treko — Βρες πού θέλεις να πας</title>
+
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+
+    <!-- Γραμματοσειρές. Αν δεν υπάρχει internet, η εφαρμογή πέφτει σε
+         γραμματοσειρά συστήματος και δουλεύει κανονικά. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jua&display=swap"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <noscript>
+      <p style="padding: 24px; font-family: system-ui, sans-serif">
+        Το Treko χρειάζεται JavaScript για να δουλέψει. Ενεργοποίησέ τη στον browser και ανανέωσε
+        τη σελίδα.
+      </p>
+    </noscript>
+
+    <!-- Η σειρά έχει σημασία: τα δεδομένα και οι βοηθητικές συναρτήσεις πρώτα. -->
+    <script src="js/data.js"></script>
+    <script src="js/lib.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/screens.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
