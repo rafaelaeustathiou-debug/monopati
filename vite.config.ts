@@ -15,6 +15,8 @@ export default defineConfig(({ mode }) => {
   const emitSourcemaps = mode === "development";
 
   return {
+    // Η εφαρμογή Treko (στατικό HTML/CSS/JS) ζει στον φάκελο docs/.
+    root: path.resolve(configDir, "docs"),
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : "/",
     build: {
       sourcemap: emitSourcemaps ? "inline" : false,
@@ -38,6 +40,7 @@ export default defineConfig(({ mode }) => {
       host: process.env.FIGMA_DEV_SERVER_HOST || "0.0.0.0",
       port: parseInt(process.env.PORT || "8443"),
       strictPort: true,
+      allowedHosts: [".app.github.dev"],
       watch: {
         ignored: ["**/.figma/**"],
       },

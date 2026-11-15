@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8443:8443"
+    volumes:
+      - .:/app
+      - /app/node_modules
