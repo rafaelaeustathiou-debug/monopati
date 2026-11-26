@@ -2,7 +2,9 @@
   "name": "monopati",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false
+    }
   },
   "postCreateCommand": "sudo corepack enable && pnpm install",
   "postStartCommand": "nohup pnpm dev > /tmp/vite.log 2>&1 &",
